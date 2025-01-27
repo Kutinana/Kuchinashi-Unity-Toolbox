@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace DataSystem
+namespace Kuchinashi.DataSystem
 {
     public abstract partial class WriteableData : IWriteableData
     {
@@ -28,10 +28,5 @@ namespace DataSystem
             var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto };
             File.WriteAllText(_path, JsonConvert.SerializeObject(_object, Formatting.Indented, settings));
         }
-    }
-
-    public interface IWriteableData
-    {
-        public abstract void Serialization();
     }
 }

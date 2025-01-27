@@ -3,7 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace DataSystem
+namespace Kuchinashi.DataSystem
 {
     public abstract partial class ReadableAndWriteableData : IReadableData , IWriteableData
     {

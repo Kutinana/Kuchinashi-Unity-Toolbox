@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using QFramework;
 using UnityEngine;
 
-namespace DataSystem
+namespace Kuchinashi.DataSystem
 {
     public abstract partial class ReadableData
     {
@@ -107,14 +107,5 @@ namespace DataSystem
                 return false;
             }
         }
-    }
-
-    public interface IReadableData
-    {
-        public abstract ReadableData DeSerialization();
-
-        public abstract T DeSerialization<T>() where T : new();
-
-        public abstract bool Validation<T>(out T value) where T : new();
     }
 }

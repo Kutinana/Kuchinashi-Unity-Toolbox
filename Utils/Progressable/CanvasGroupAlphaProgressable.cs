@@ -7,7 +7,7 @@ namespace Kuchinashi.Utils.Progressable
     [ExecuteInEditMode]
     public class CanvasGroupAlphaProgressable : Progressable
     {
-        public CanvasGroup TargetCanvasGroup;
+        [SerializeField] private CanvasGroup TargetCanvasGroup;
 
         [Header("Settings")]
         public float StartAlpha = 0f;
