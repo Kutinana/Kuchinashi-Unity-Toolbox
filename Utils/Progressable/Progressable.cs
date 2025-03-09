@@ -81,5 +81,33 @@ namespace Kuchinashi.Utils.Progressable
                 yield return InverseLinearTransitionCoroutine(time);
             }
         }
+
+        public void Lerp(float step)
+        {
+            if (currentCoroutine != null)
+                StopCoroutine(currentCoroutine);
+
+            currentCoroutine = StartCoroutine(LerpCoroutine(0f, 1f, step));
+        }
+
+        public void InverseLerp(float step)
+        {
+            if (currentCoroutine != null)
+                StopCoroutine(currentCoroutine);
+
+            currentCoroutine = StartCoroutine(LerpCoroutine(1f, 0f, step));
+        }
+
+        public IEnumerator LerpCoroutine(float startValue, float endValue, float step = 0.1f)
+        {
+            if (Mathf.Approximately(Progress, endValue)) yield break;
+
+            while (!Mathf.Approximately(Progress, endValue))
+            {
+                Progress = Mathf.Lerp(Progress, endValue, step);
+                yield return null;
+            }
+            Progress = ProgressCurve.Evaluate(endValue);
+        }
     }
 }
