@@ -18,15 +18,23 @@ namespace Kuchinashi.Utils.Progressable
             evaluation = ProgressCurve.Evaluate(Progress);
         }
 
-        public Coroutine LinearTransition(float time)
+        public void LinearTransition(float time)
         {
             if (currentCoroutine != null)
                 StopCoroutine(currentCoroutine);
 
-            return currentCoroutine = StartCoroutine(LinearTransitionCoroutine(time));
+            currentCoroutine = StartCoroutine(LinearTransitionCoroutine(time));
         }
 
-        public Coroutine LinearTransition(float time, float delay)
+        public void LinearTransition(float time, out Coroutine coroutine)
+        {
+            if (currentCoroutine != null)
+                StopCoroutine(currentCoroutine);
+
+            coroutine = currentCoroutine = StartCoroutine(LinearTransitionCoroutine(time));
+        }
+
+        public Coroutine LinearTransition(float time, float delay = 0f)
         {
             if (currentCoroutine != null)
                 StopCoroutine(currentCoroutine);
@@ -52,15 +60,23 @@ namespace Kuchinashi.Utils.Progressable
             Progress = 1f;
         }
 
-        public Coroutine InverseLinearTransition(float time)
+        public void InverseLinearTransition(float time)
         {
             if (currentCoroutine != null)
                 StopCoroutine(currentCoroutine);
 
-            return currentCoroutine = StartCoroutine(InverseLinearTransitionCoroutine(time));
+            currentCoroutine = StartCoroutine(InverseLinearTransitionCoroutine(time));
         }
 
-        public Coroutine InverseLinearTransition(float time, float delay)
+        public void InverseLinearTransition(float time, out Coroutine coroutine)
+        {
+            if (currentCoroutine != null)
+                StopCoroutine(currentCoroutine);
+
+            coroutine = currentCoroutine = StartCoroutine(InverseLinearTransitionCoroutine(time));
+        }
+
+        public Coroutine InverseLinearTransition(float time, float delay = 0f)
         {
             if (currentCoroutine != null)
                 StopCoroutine(currentCoroutine);
