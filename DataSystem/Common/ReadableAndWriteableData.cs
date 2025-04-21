@@ -18,15 +18,15 @@ namespace Kuchinashi.DataSystem
             File.WriteAllText(Path, JsonConvert.SerializeObject(this, Formatting.Indented, settings));
         }
         
-        public virtual ReadableData DeSerialization()
+        public virtual IReadableData DeSerialization()
         {
             if (string.IsNullOrEmpty(Path) || !File.Exists(Path)) return null;
 
             var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto };
-            return JsonConvert.DeserializeObject<ReadableData>(File.ReadAllText(Path), settings);
+            return JsonConvert.DeserializeObject<ReadableAndWriteableData>(File.ReadAllText(Path), settings);
         }
 
-        public virtual T DeSerialization<T>() where T : new()
+        public virtual T DeSerialization<T>() where T : IReadableData, new()
         {
             if (string.IsNullOrEmpty(Path) || !File.Exists(Path)) return new T();
 
@@ -34,7 +34,7 @@ namespace Kuchinashi.DataSystem
             return JsonConvert.DeserializeObject<T>(File.ReadAllText(Path), settings) ?? new T();
         }
 
-        public virtual bool Validation<T>(out T value) where T : new()
+        public virtual bool Validation<T>(out T value) where T : IReadableData, new()
         {
             value = new T();
             try

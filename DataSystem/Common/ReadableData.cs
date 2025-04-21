@@ -3,13 +3,27 @@ using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
 
+# if SUPPORT_QFRAMEWORK
+
+using QFramework;
+
+# endif
+
 namespace Kuchinashi.DataSystem
 {
-    public abstract partial class ReadableData
+    public abstract partial class ReadableData : IReadableData
     {
         public abstract string Path { get; }
 
-        public virtual T DeSerialization<T>() where T : new()
+        public virtual IReadableData DeSerialization()
+        {
+            if (string.IsNullOrEmpty(Path) || !File.Exists(Path)) return null;
+
+            var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto };
+            return JsonConvert.DeserializeObject<ReadableData>(File.ReadAllText(Path), settings);
+        }
+
+        public virtual T DeSerialization<T>() where T : IReadableData, new()
         {
             if (string.IsNullOrEmpty(Path) || !File.Exists(Path)) return new T();
 
@@ -17,7 +31,7 @@ namespace Kuchinashi.DataSystem
             return JsonConvert.DeserializeObject<T>(File.ReadAllText(Path), settings);
         }
 
-        public virtual bool Validation<T>(out T value) where T : new()
+        public virtual bool Validation<T>(out T value) where T : IReadableData, new()
         {
             value = new T();
             try
@@ -73,7 +87,7 @@ namespace Kuchinashi.DataSystem
 
 # if SUPPORT_QFRAMEWORK
 
-        public static T DeSerialization<T>(string _bundle, string _id) where T : new()
+        public static T DeSerialization<T>(string _bundle, string _id) where T : IReadableData, new()
         {
             try
             {
@@ -92,7 +106,7 @@ namespace Kuchinashi.DataSystem
             }
         }
 
-        public static bool Validation<T>(string _bundle, string _id, out T value) where T : new()
+        public static bool Validation<T>(string _bundle, string _id, out T value) where T : IReadableData, new()
         {
             value = new T();
             try

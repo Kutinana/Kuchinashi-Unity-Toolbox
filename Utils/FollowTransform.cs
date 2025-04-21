@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 namespace Kuchinashi.Utils
@@ -8,6 +7,7 @@ namespace Kuchinashi.Utils
         public Transform target;
         public Vector3 offset;
 
+        [Header("Additional Settings")]
         public bool followX = true;
         public bool followY = true;
         public bool followZ = true;

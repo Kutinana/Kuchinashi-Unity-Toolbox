@@ -2,10 +2,10 @@ namespace Kuchinashi.DataSystem
 {
     public interface IReadableData
     {
-        public abstract ReadableData DeSerialization();
+        public abstract IReadableData DeSerialization();
 
-        public abstract T DeSerialization<T>() where T : new();
+        public abstract T DeSerialization<T>() where T : IReadableData, new();
 
-        public abstract bool Validation<T>(out T value) where T : new();
+        public abstract bool Validation<T>(out T value) where T : IReadableData, new();
     }
 }
