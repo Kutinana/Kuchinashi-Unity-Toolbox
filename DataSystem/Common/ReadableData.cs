@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using Newtonsoft.Json;
-using QFramework;
 using UnityEngine;
 
 namespace Kuchinashi.DataSystem
@@ -55,6 +54,25 @@ namespace Kuchinashi.DataSystem
             return JsonConvert.DeserializeObject<T>(json, settings);
         }
 
+        public static bool Validation<T>(string _path, out T value) where T : new()
+        {
+            value = new T();
+            try
+            {
+                // Ability of reading
+                value = DeSerialization<T>(_path);
+                
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                return false;
+            }
+        }
+
+# if SUPPORT_QFRAMEWORK
+
         public static T DeSerialization<T>(string _bundle, string _id) where T : new()
         {
             try
@@ -74,23 +92,6 @@ namespace Kuchinashi.DataSystem
             }
         }
 
-        public static bool Validation<T>(string _path, out T value) where T : new()
-        {
-            value = new T();
-            try
-            {
-                // Ability of reading
-                value = DeSerialization<T>(_path);
-                
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                return false;
-            }
-        }
-
         public static bool Validation<T>(string _bundle, string _id, out T value) where T : new()
         {
             value = new T();
@@ -107,5 +108,7 @@ namespace Kuchinashi.DataSystem
                 return false;
             }
         }
+# endif
+
     }
 }

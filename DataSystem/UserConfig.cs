@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using QFramework;
 using System;
 
 namespace Kuchinashi.DataSystem
 {
-    public class UserConfig : ISingleton
+    public class UserConfig
     {
         public static string Path { get => System.IO.Path.Combine(Application.persistentDataPath, "config"); }
         public static Dictionary<string, string> Instance
@@ -15,7 +14,6 @@ namespace Kuchinashi.DataSystem
             private set => _instance = value;
         }
         private static Dictionary<string, string> _instance;
-        public void OnSingletonInit() {}
 
         public static Dictionary<string, string> DeSerialization() => ReadableData.DeSerialization<Dictionary<string, string>>(Path);
         public static void Serialization() => WriteableData.Serialization(Path, Instance);

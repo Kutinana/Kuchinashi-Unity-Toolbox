@@ -1,5 +1,4 @@
 using System.Collections;
-using Homebrew;
 using UnityEngine;
 
 namespace Kuchinashi.Utils
@@ -15,7 +14,7 @@ namespace Kuchinashi.Utils
 
         public float thresholdDistance = 0.1f;
 
-        [Foldout("Smooth Follow Settings", true)]
+        [Header("Smooth Follow Settings")]
         public bool smoothFollow = false;
         public float smoothSpeed = 0.125f;
 

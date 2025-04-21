@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using QFramework;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,18 +34,18 @@ namespace Kuchinashi
 
             yield return new WaitForSeconds(delay);
 
-            if (alpha == 1f) canvasGroup.ForEach(x => x.blocksRaycasts = true);
-            else canvasGroup.ForEach(x => x.interactable = false);
+            if (alpha == 1f) canvasGroup.ToList().ForEach(x => x.blocksRaycasts = true);
+            else canvasGroup.ToList().ForEach(x => x.interactable = false);
 
             while (!Mathf.Approximately(canvasGroup[0].alpha, alpha))
             {
-                canvasGroup.ForEach(x => x.alpha = Mathf.MoveTowards(x.alpha, alpha, speed));
+                canvasGroup.ToList().ForEach(x => x.alpha = Mathf.MoveTowards(x.alpha, alpha, speed));
                 yield return new WaitForFixedUpdate();
             }
-            canvasGroup.ForEach(x => x.alpha = alpha);
+            canvasGroup.ToList().ForEach(x => x.alpha = alpha);
 
-            if (alpha == 0f) canvasGroup.ForEach(x => x.blocksRaycasts = false);
-            else canvasGroup.ForEach(x => x.interactable = true);
+            if (alpha == 0f) canvasGroup.ToList().ForEach(x => x.blocksRaycasts = false);
+            else canvasGroup.ToList().ForEach(x => x.interactable = true);
         }
 
         public static IEnumerator FadeCanvasGroupWithButton(CanvasGroup canvasGroup, Button button, float alpha, float speed = 0.05f)
