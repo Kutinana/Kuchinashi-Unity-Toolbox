@@ -8,7 +8,7 @@ namespace Kuchinashi.DataSystem
     {
         public abstract string Path { get; }
 
-        public void Serialization()
+        public void Serialize()
         {
             if (File.Exists(Path)) File.Delete(Path);
             File.Create(Path).Dispose();
@@ -20,7 +20,7 @@ namespace Kuchinashi.DataSystem
 
     public partial class WriteableData
     {
-        public static void Serialization(string _path, object _object)
+        public static void Serialize(string _path, object _object)
         {
             if (File.Exists(_path)) File.Delete(_path);
             File.Create(_path).Dispose();

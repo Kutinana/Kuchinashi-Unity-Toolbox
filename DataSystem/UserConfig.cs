@@ -15,8 +15,8 @@ namespace Kuchinashi.DataSystem
         }
         private static Dictionary<string, string> _instance;
 
-        public static Dictionary<string, string> DeSerialization() => ReadableData.DeSerialization<Dictionary<string, string>>(Path);
-        public static void Serialization() => WriteableData.Serialization(Path, Instance);
+        public static Dictionary<string, string> DeSerialization() => ReadableData.DeSerialize<Dictionary<string, string>>(Path);
+        public static void Serialization() => WriteableData.Serialize(Path, Instance);
 
         public static Dictionary<string, string> GetConfig()
         {

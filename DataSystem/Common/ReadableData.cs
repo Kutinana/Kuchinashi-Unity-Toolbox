@@ -15,7 +15,7 @@ namespace Kuchinashi.DataSystem
     {
         public abstract string Path { get; }
 
-        public virtual IReadableData DeSerialization()
+        public virtual IReadableData DeSerialize()
         {
             if (string.IsNullOrEmpty(Path) || !File.Exists(Path)) return null;
 
@@ -23,7 +23,7 @@ namespace Kuchinashi.DataSystem
             return JsonConvert.DeserializeObject<ReadableData>(File.ReadAllText(Path), settings);
         }
 
-        public virtual T DeSerialization<T>() where T : IReadableData, new()
+        public virtual T DeSerialize<T>() where T : IReadableData, new()
         {
             if (string.IsNullOrEmpty(Path) || !File.Exists(Path)) return new T();
 
@@ -31,13 +31,13 @@ namespace Kuchinashi.DataSystem
             return JsonConvert.DeserializeObject<T>(File.ReadAllText(Path), settings);
         }
 
-        public virtual bool Validation<T>(out T value) where T : IReadableData, new()
+        public virtual bool Validate<T>(out T value) where T : IReadableData, new()
         {
             value = new T();
             try
             {
                 // Ability of reading
-                value = DeSerialization<T>();
+                value = DeSerialize<T>();
                 
                 return true;
             }
@@ -51,7 +51,7 @@ namespace Kuchinashi.DataSystem
 
     public partial class ReadableData
     {
-        public static T DeSerialization<T>(string _path) where T : new()
+        public static T DeSerialize<T>(string _path) where T : new()
         {
             if (string.IsNullOrEmpty(_path)) return new T();
 
@@ -68,13 +68,13 @@ namespace Kuchinashi.DataSystem
             return JsonConvert.DeserializeObject<T>(json, settings);
         }
 
-        public static bool Validation<T>(string _path, out T value) where T : new()
+        public static bool Validate<T>(string _path, out T value) where T : new()
         {
             value = new T();
             try
             {
                 // Ability of reading
-                value = DeSerialization<T>(_path);
+                value = DeSerialize<T>(_path);
                 
                 return true;
             }
@@ -87,7 +87,7 @@ namespace Kuchinashi.DataSystem
 
 # if SUPPORT_QFRAMEWORK
 
-        public static T DeSerialization<T>(string _bundle, string _id) where T : IReadableData, new()
+        public static T DeSerialize<T>(string _bundle, string _id) where T : IReadableData, new()
         {
             try
             {
@@ -106,13 +106,13 @@ namespace Kuchinashi.DataSystem
             }
         }
 
-        public static bool Validation<T>(string _bundle, string _id, out T value) where T : IReadableData, new()
+        public static bool Validate<T>(string _bundle, string _id, out T value) where T : IReadableData, new()
         {
             value = new T();
             try
             {
                 // Ability of reading
-                value = DeSerialization<T>(_bundle, _id);
+                value = DeSerialize<T>(_bundle, _id);
                 
                 return true;
             }

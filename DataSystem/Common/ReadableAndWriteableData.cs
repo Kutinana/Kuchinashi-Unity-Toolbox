@@ -9,7 +9,7 @@ namespace Kuchinashi.DataSystem
     {
         public abstract string Path { get; }
 
-        public void Serialization()
+        public void Serialize()
         {
             if (File.Exists(Path)) File.Delete(Path);
             File.Create(Path).Dispose();
@@ -18,7 +18,7 @@ namespace Kuchinashi.DataSystem
             File.WriteAllText(Path, JsonConvert.SerializeObject(this, Formatting.Indented, settings));
         }
         
-        public virtual IReadableData DeSerialization()
+        public virtual IReadableData DeSerialize()
         {
             if (string.IsNullOrEmpty(Path) || !File.Exists(Path)) return null;
 
@@ -26,7 +26,7 @@ namespace Kuchinashi.DataSystem
             return JsonConvert.DeserializeObject<ReadableAndWriteableData>(File.ReadAllText(Path), settings);
         }
 
-        public virtual T DeSerialization<T>() where T : IReadableData, new()
+        public virtual T DeSerialize<T>() where T : IReadableData, new()
         {
             if (string.IsNullOrEmpty(Path) || !File.Exists(Path)) return new T();
 
@@ -34,13 +34,13 @@ namespace Kuchinashi.DataSystem
             return JsonConvert.DeserializeObject<T>(File.ReadAllText(Path), settings) ?? new T();
         }
 
-        public virtual bool Validation<T>(out T value) where T : IReadableData, new()
+        public virtual bool Validate<T>(out T value) where T : IReadableData, new()
         {
             value = new T();
             try
             {
                 // Ability of reading
-                value = DeSerialization<T>() ?? new T();
+                value = DeSerialize<T>() ?? new T();
                 
                 return true;
             }
