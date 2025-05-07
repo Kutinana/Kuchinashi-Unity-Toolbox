@@ -102,21 +102,33 @@ namespace Kuchinashi.Utils.Progressable
             Progress = 0f;
         }
 
-        public void PingPong(float time)
+        public Coroutine PingPong(float time, float startValue = 0f, float endValue = 1f)
         {
             if (currentCoroutine != null)
                 StopCoroutine(currentCoroutine);
 
-            currentCoroutine = StartCoroutine(PingPongCoroutine(time));
+            return currentCoroutine = StartCoroutine(PingPongCoroutine(time, startValue, endValue));
         }
 
-        private IEnumerator PingPongCoroutine(float time)
+        private IEnumerator PingPongCoroutine(float time, float startValue, float endValue)
         {
+            var elapsedTime = 0f;
             while (true)
             {
-                yield return LinearTransitionCoroutine(time);
-                yield return null;
-                yield return InverseLinearTransitionCoroutine(time);
+                elapsedTime = 0f;
+                while (!Mathf.Approximately(Progress, endValue))
+                {
+                    Progress = Mathf.Lerp(startValue, endValue, elapsedTime / time);
+                    elapsedTime += Time.deltaTime;
+                    yield return null;
+                }
+                elapsedTime = 0f;
+                while (!Mathf.Approximately(Progress, startValue))
+                {
+                    Progress = Mathf.Lerp(endValue, startValue, elapsedTime / time);
+                    elapsedTime += Time.deltaTime;
+                    yield return null;
+                }
             }
         }
 
