@@ -132,32 +132,49 @@ namespace Kuchinashi.Utils.Progressable
             }
         }
 
-        public void Lerp(float step)
+        public void SmoothDamp(float time)
         {
             if (currentCoroutine != null)
                 StopCoroutine(currentCoroutine);
 
-            currentCoroutine = StartCoroutine(LerpCoroutine(0f, 1f, step));
+            currentCoroutine = StartCoroutine(SmoothDampCoroutine(1f, time));
         }
 
-        public void InverseLerp(float step)
+        public Coroutine SmoothDamp(float time, out Coroutine coroutine)
         {
             if (currentCoroutine != null)
                 StopCoroutine(currentCoroutine);
 
-            currentCoroutine = StartCoroutine(LerpCoroutine(1f, 0f, step));
+            return coroutine = currentCoroutine = StartCoroutine(SmoothDampCoroutine(1f, time));
         }
 
-        public IEnumerator LerpCoroutine(float startValue, float endValue, float step = 0.1f)
+        public void InverseSmoothDamp(float time)
         {
-            if (Mathf.Approximately(Progress, endValue)) yield break;
+            if (currentCoroutine != null)
+                StopCoroutine(currentCoroutine);
 
-            while (!Mathf.Approximately(Progress, endValue))
+            currentCoroutine = StartCoroutine(SmoothDampCoroutine(0f, time));
+        }
+
+        public Coroutine InverseSmoothDamp(float time, out Coroutine coroutine)
+        {
+            if (currentCoroutine != null)
+                StopCoroutine(currentCoroutine);
+
+            return coroutine = currentCoroutine = StartCoroutine(SmoothDampCoroutine(0f, time));
+        }
+
+        public IEnumerator SmoothDampCoroutine(float endValue, float smoothTime = 0.1f)
+        {
+            if (Mathf.Abs(Progress - endValue) < 0.001f) yield break;
+
+            var currentVelocity = 0f;
+            while (Mathf.Abs(Progress - endValue) > 0.001f)
             {
-                Progress = Mathf.Lerp(Progress, endValue, step);
+                Progress = Mathf.SmoothDamp(Progress, endValue, ref currentVelocity, smoothTime);
                 yield return null;
             }
-            Progress = ProgressCurve.Evaluate(endValue);
+            Progress = endValue;
         }
     }
 }
