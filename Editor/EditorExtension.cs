@@ -14,7 +14,13 @@ namespace Kuchinashi.Editor
         [MenuItem ("Kuchinashi/Open Persistent Data Folder")]
         public static void OpenPersistentDataFolder()
         {
+
+# if UNITY_EDITOR_WIN
             EditorUtility.RevealInFinder(Path.Combine(Application.persistentDataPath, Application.productName));
+# elif UNITY_EDITOR_OSX
+            EditorUtility.RevealInFinder(Application.persistentDataPath);
+# endif
+
         }
 
         [MenuItem ("Kuchinashi/Delete Persistent Data Folder")]
