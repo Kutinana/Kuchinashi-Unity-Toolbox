@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace Kuchinashi.Utils
@@ -17,6 +18,7 @@ namespace Kuchinashi.Utils
         [Header("Smooth Follow Settings")]
         public bool smoothFollow = false;
         public float smoothSpeed = 0.125f;
+        private Coroutine m_SmoothFollowCoroutine;
 
         void FixedUpdate()
         {
@@ -26,14 +28,28 @@ namespace Kuchinashi.Utils
             Vector3 currentPosition = transform.position;
             var newPosition = smoothFollow ? Vector3.Lerp(currentPosition, targetPosition, smoothSpeed) : targetPosition;
 
-            if (Vector3.Distance(currentPosition, targetPosition) > thresholdDistance)
+            if (Vector3.Distance(currentPosition, targetPosition) > thresholdDistance && smoothFollow)
             {
-                transform.position = new Vector3(
-                    followX ? newPosition.x : currentPosition.x,
-                    followY ? newPosition.y : currentPosition.y,
-                    followZ ? newPosition.z : currentPosition.z
-                );
+                if (m_SmoothFollowCoroutine != null) return;
+                m_SmoothFollowCoroutine = StartCoroutine(SmoothFollowCoroutine());
             }
+        }
+
+        private IEnumerator SmoothFollowCoroutine()
+        {
+            while (!Mathf.Approximately(transform.position.x, target.position.x)
+                || !Mathf.Approximately(transform.position.y, target.position.y)
+                || !Mathf.Approximately(transform.position.z, target.position.z))
+            {
+                var newPosition = Vector3.Lerp(transform.position, target.position, smoothSpeed);
+                transform.position = new Vector3(
+                    followX ? newPosition.x : transform.position.x,
+                    followY ? newPosition.y : transform.position.y,
+                    followZ ? newPosition.z : transform.position.z
+                );
+                yield return new WaitForFixedUpdate();
+            }
+            m_SmoothFollowCoroutine = null;
         }
     }
 }
