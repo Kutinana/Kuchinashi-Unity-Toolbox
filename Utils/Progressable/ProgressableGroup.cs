@@ -9,7 +9,7 @@ namespace Kuchinashi.Utils.Progressable
     {
         public List<Progressable> Progressables = new();
 
-        protected override void Update()
+        internal override void Update()
         {
             base.Update();
 
@@ -17,6 +17,7 @@ namespace Kuchinashi.Utils.Progressable
             {
                 if (progressable == null) continue;
                 progressable.Progress = evaluation;
+                progressable.Update();
             }
         }
     }

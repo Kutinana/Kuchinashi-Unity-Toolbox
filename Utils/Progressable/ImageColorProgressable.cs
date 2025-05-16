@@ -18,7 +18,7 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetImage == null) TargetImage = TryGetComponent<Image>(out var image) ? image : null;
         }
 
-        protected override void Update()
+        internal override void Update()
         {
             if (TargetImage == null) return;
             base.Update();

@@ -17,7 +17,7 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetRectTransform == null) TargetRectTransform = GetComponent<RectTransform>();
         }
 
-        protected override void Update()
+        internal override void Update()
         {
             if (TargetRectTransform == null) return;
             base.Update();

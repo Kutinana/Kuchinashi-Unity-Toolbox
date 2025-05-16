@@ -18,7 +18,7 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetRenderer == null) TargetRenderer = TryGetComponent<SpriteRenderer>(out var renderer) ? renderer : null;
         }
 
-        protected override void Update()
+        internal override void Update()
         {
             if (TargetRenderer == null) return;
             base.Update();

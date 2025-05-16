@@ -13,7 +13,7 @@ namespace Kuchinashi.Utils.Progressable
         protected float evaluation;
         protected Coroutine currentCoroutine = null;
 
-        protected virtual void Update()
+        internal virtual void Update()
         {
             evaluation = ProgressCurve.Evaluate(Progress);
         }

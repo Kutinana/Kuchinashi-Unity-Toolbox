@@ -20,7 +20,7 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetCanvasGroup == null) TargetCanvasGroup = TryGetComponent<CanvasGroup>(out var cg) ? cg : null;
         }
 
-        protected override void Update()
+        internal override void Update()
         {
             if (TargetCanvasGroup == null) return;
             base.Update();

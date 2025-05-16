@@ -17,7 +17,7 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetTransform == null) TargetTransform = transform;
         }
 
-        protected override void Update()
+        internal override void Update()
         {
             if (TargetTransform == null) return;
             base.Update();

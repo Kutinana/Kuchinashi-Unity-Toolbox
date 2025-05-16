@@ -18,7 +18,7 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetText == null) TargetText = GetComponent<TMP_Text>();
         }
 
-        protected override void Update()
+        internal override void Update()
         {
             if (TargetText == null) return;
             base.Update();
