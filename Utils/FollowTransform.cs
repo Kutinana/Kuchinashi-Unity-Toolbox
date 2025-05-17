@@ -23,31 +23,39 @@ namespace Kuchinashi.Utils
         void FixedUpdate()
         {
             if (target == null) return;
+            if (m_SmoothFollowCoroutine != null) return;
 
             Vector3 targetPosition = target.position + offset;
             Vector3 currentPosition = transform.position;
-            var newPosition = smoothFollow ? Vector3.Lerp(currentPosition, targetPosition, smoothSpeed) : targetPosition;
+            // var newPosition = smoothFollow ? Vector3.Lerp(currentPosition, targetPosition, smoothSpeed) : targetPosition;
 
             if (Vector3.Distance(currentPosition, targetPosition) > thresholdDistance && smoothFollow)
             {
-                if (m_SmoothFollowCoroutine != null) return;
                 m_SmoothFollowCoroutine = StartCoroutine(SmoothFollowCoroutine());
+            }
+            else if (!smoothFollow)
+            {
+                transform.position = targetPosition;
             }
         }
 
         private IEnumerator SmoothFollowCoroutine()
         {
-            while (!Mathf.Approximately(transform.position.x, target.position.x)
-                || !Mathf.Approximately(transform.position.y, target.position.y)
-                || !Mathf.Approximately(transform.position.z, target.position.z))
+            Vector3 targetPosition = target.position + offset;
+
+            while (Mathf.Abs(transform.position.x - targetPosition.x) > 0.01f
+                || Mathf.Abs(transform.position.y - targetPosition.y) > 0.01f
+                || Mathf.Abs(transform.position.z - targetPosition.z) > 0.01f)
             {
-                var newPosition = Vector3.Lerp(transform.position, target.position, smoothSpeed);
+                var newPosition = Vector3.Lerp(transform.position, targetPosition, smoothSpeed);
                 transform.position = new Vector3(
                     followX ? newPosition.x : transform.position.x,
                     followY ? newPosition.y : transform.position.y,
                     followZ ? newPosition.z : transform.position.z
                 );
                 yield return new WaitForFixedUpdate();
+
+                targetPosition = target.position + offset;
             }
             m_SmoothFollowCoroutine = null;
         }
