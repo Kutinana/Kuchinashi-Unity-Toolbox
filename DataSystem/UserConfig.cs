@@ -30,9 +30,9 @@ namespace Kuchinashi.DataSystem
             {
                 "String" => (T)Convert.ChangeType(value, typeof(T)),
                 "Int32" => (T)Convert.ChangeType(int.TryParse(value, out var res) ? res : 0, typeof(T)),
-                "System.Single" => (T)Convert.ChangeType(float.TryParse(value, out var res) ? res : 0f, typeof(T)),
-                "System.Double" => (T)Convert.ChangeType(double.TryParse(value, out var res) ? res : 0d, typeof(T)),
-                "System.Decimal" => (T)Convert.ChangeType(decimal.TryParse(value, out var res) ? res : 0m, typeof(T)),
+                "Single" => (T)Convert.ChangeType(float.TryParse(value, out var res) ? res : 0f, typeof(T)),
+                "Double" => (T)Convert.ChangeType(double.TryParse(value, out var res) ? res : 0d, typeof(T)),
+                "Decimal" => (T)Convert.ChangeType(decimal.TryParse(value, out var res) ? res : 0m, typeof(T)),
                 "Boolean" => (T)Convert.ChangeType(bool.TryParse(value, out var res) ? res : false, typeof(T)),
                 _ => default(T),
             };
@@ -45,9 +45,9 @@ namespace Kuchinashi.DataSystem
             {
                 "String" => (T)Convert.ChangeType(value, typeof(T)),
                 "Int32" => (T)Convert.ChangeType(int.TryParse(value, out var res) ? res : defaultValue, typeof(T)),
-                "System.Single" => (T)Convert.ChangeType(float.TryParse(value, out var res) ? res : (float)Convert.ChangeType(defaultValue, typeof(float)), typeof(T)),
-                "System.Double" => (T)Convert.ChangeType(double.TryParse(value, out var res) ? res : (double)Convert.ChangeType(defaultValue, typeof(double)), typeof(T)),
-                "System.Decimal" => (T)Convert.ChangeType(decimal.TryParse(value, out var res) ? res : (decimal)Convert.ChangeType(defaultValue, typeof(decimal)), typeof(T)),
+                "Single" => (T)Convert.ChangeType(float.TryParse(value, out var res) ? res : (float)Convert.ChangeType(defaultValue, typeof(float)), typeof(T)),
+                "Double" => (T)Convert.ChangeType(double.TryParse(value, out var res) ? res : (double)Convert.ChangeType(defaultValue, typeof(double)), typeof(T)),
+                "Decimal" => (T)Convert.ChangeType(decimal.TryParse(value, out var res) ? res : (decimal)Convert.ChangeType(defaultValue, typeof(decimal)), typeof(T)),
                 "Boolean" => (T)Convert.ChangeType(bool.TryParse(value, out var res) ? res : defaultValue, typeof(T)),
                 _ => defaultValue,
             };
@@ -64,9 +64,9 @@ namespace Kuchinashi.DataSystem
                 {
                     "String" => (T)Convert.ChangeType(value, typeof(T)),
                     "Int32" => (T)Convert.ChangeType(int.TryParse(value, out var res) ? res : 0, typeof(T)),
-                    "System.Single" => (T)Convert.ChangeType(float.TryParse(value, out var res) ? res : 0f, typeof(T)),
-                    "System.Double" => (T)Convert.ChangeType(double.TryParse(value, out var res) ? res : 0d, typeof(T)),
-                    "System.Decimal" => (T)Convert.ChangeType(decimal.TryParse(value, out var res) ? res : 0m, typeof(T)),
+                    "Single" => (T)Convert.ChangeType(float.TryParse(value, out var res) ? res : 0f, typeof(T)),
+                    "Double" => (T)Convert.ChangeType(double.TryParse(value, out var res) ? res : 0d, typeof(T)),
+                    "Decimal" => (T)Convert.ChangeType(decimal.TryParse(value, out var res) ? res : 0m, typeof(T)),
                     "Boolean" => (T)Convert.ChangeType(bool.TryParse(value, out var res) ? res : false, typeof(T)),
                     _ => default(T),
                 };
