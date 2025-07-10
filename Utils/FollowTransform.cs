@@ -20,12 +20,16 @@ namespace Kuchinashi.Utils
         public float smoothSpeed = 0.125f;
         private Coroutine m_SmoothFollowCoroutine;
 
+        [Header("Proportional Settings")]
+        public bool isProportional = false;
+        public Vector3 proportion = Vector3.one;
+
         void FixedUpdate()
         {
             if (target == null) return;
             if (m_SmoothFollowCoroutine != null) return;
 
-            Vector3 targetPosition = target.position + offset;
+            Vector3 targetPosition = Vector3.Scale(target.position, isProportional ? proportion : Vector3.one) + offset;
             Vector3 currentPosition = transform.position;
             // var newPosition = smoothFollow ? Vector3.Lerp(currentPosition, targetPosition, smoothSpeed) : targetPosition;
 
@@ -41,7 +45,7 @@ namespace Kuchinashi.Utils
 
         private IEnumerator SmoothFollowCoroutine()
         {
-            Vector3 targetPosition = target.position + offset;
+            Vector3 targetPosition = Vector3.Scale(target.position, isProportional ? proportion : Vector3.one) + offset;
 
             while (Mathf.Abs(transform.position.x - targetPosition.x) > 0.01f
                 || Mathf.Abs(transform.position.y - targetPosition.y) > 0.01f
@@ -55,7 +59,7 @@ namespace Kuchinashi.Utils
                 );
                 yield return new WaitForFixedUpdate();
 
-                targetPosition = target.position + offset;
+                targetPosition = Vector3.Scale(target.position, isProportional ? proportion : Vector3.one) + offset;
             }
             m_SmoothFollowCoroutine = null;
         }
