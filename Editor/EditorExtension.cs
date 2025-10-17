@@ -11,7 +11,7 @@ namespace Kuchinashi.Editor
 {
     public class EditorExtension : EditorWindow
     {
-        [MenuItem ("Kuchinashi/Open Persistent Data Folder")]
+        [MenuItem ("Kuchinashi/Open Persistent Data Folder", priority = 0)]
         public static void OpenPersistentDataFolder()
         {
 
@@ -23,13 +23,13 @@ namespace Kuchinashi.Editor
 
         }
 
-        [MenuItem ("Kuchinashi/Delete Persistent Data Folder")]
+        [MenuItem ("Kuchinashi/Delete Persistent Data Folder", priority = 1)]
         public static void DeletePersistentDataFolder()
         {
             Directory.Delete(Application.persistentDataPath, true);
         }
 
-        [MenuItem ("Kuchinashi/Reset PlayerPrefs")]
+        [MenuItem ("Kuchinashi/Reset PlayerPrefs", priority = 2)]
         public static void ResetPlayerPrefs()
         {
             PlayerPrefs.DeleteAll();
