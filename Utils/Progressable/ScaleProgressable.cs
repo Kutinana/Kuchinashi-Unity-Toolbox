@@ -9,8 +9,8 @@ namespace Kuchinashi.Utils.Progressable
     {
         public Transform TargetTransform;
 
-        public Vector3 StartScale;
-        public Vector3 EndScale;
+        public Vector3 StartScale = Vector3.one;
+        public Vector3 EndScale = Vector3.one;
 
         private void Awake()
         {
