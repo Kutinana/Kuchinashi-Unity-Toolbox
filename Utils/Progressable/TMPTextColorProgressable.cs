@@ -5,7 +5,6 @@ using TMPro;
 
 namespace Kuchinashi.Utils.Progressable
 {
-    [ExecuteInEditMode]
     public class TMPTextColorProgressable : Progressable
     {
         public TMP_Text TargetText;
@@ -18,12 +17,19 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetText == null) TargetText = GetComponent<TMP_Text>();
         }
 
-        internal override void Update()
+        protected override void ApplyEvaluation()
         {
             if (TargetText == null) return;
-            base.Update();
+            
+            var next = Color.Lerp(StartColor, EndColor, evaluation);
+            if (TargetText.color != next)
+                TargetText.color = next;
+        }
 
-            TargetText.color = Color.Lerp(StartColor, EndColor, evaluation);
+        protected override void OnValidate()
+        {
+            if (TargetText == null) TargetText = GetComponent<TMP_Text>();
+            base.OnValidate();
         }
     }
 }

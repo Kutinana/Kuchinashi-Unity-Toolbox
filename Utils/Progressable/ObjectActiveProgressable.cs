@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Kuchinashi.Utils.Progressable
 {
-    [ExecuteInEditMode]
     public class ObjectActiveProgressable : Progressable
     {
         [SerializeField] private GameObject TargetObject;
@@ -12,12 +11,18 @@ namespace Kuchinashi.Utils.Progressable
         [Header("Settings")]
         [Range(0f, 1f)] public float ActiveThreshold = 0.5f;
 
-        internal override void Update()
+        protected override void ApplyEvaluation()
         {
             if (TargetObject == null) return;
-            base.Update();
+            
+            var shouldActive = evaluation > ActiveThreshold;
+            if (TargetObject.activeSelf != shouldActive)
+                TargetObject.SetActive(shouldActive);
+        }
 
-            TargetObject.SetActive(evaluation > ActiveThreshold);
+        protected override void OnValidate()
+        {
+            base.OnValidate();
         }
     }
 }

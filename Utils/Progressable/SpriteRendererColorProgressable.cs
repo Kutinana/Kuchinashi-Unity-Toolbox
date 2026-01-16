@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 namespace Kuchinashi.Utils.Progressable
 {
-    [ExecuteInEditMode]
     public class SpriteRendererColorProgressable : Progressable
     {
         public SpriteRenderer TargetRenderer;
@@ -18,12 +17,19 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetRenderer == null) TargetRenderer = TryGetComponent<SpriteRenderer>(out var renderer) ? renderer : null;
         }
 
-        internal override void Update()
+        protected override void ApplyEvaluation()
         {
             if (TargetRenderer == null) return;
-            base.Update();
+            
+            var next = Color.Lerp(StartColor, EndColor, evaluation);
+            if (TargetRenderer.color != next)
+                TargetRenderer.color = next;
+        }
 
-            TargetRenderer.color = Color.Lerp(StartColor, EndColor, evaluation);
+        protected override void OnValidate()
+        {
+            if (TargetRenderer == null) TargetRenderer = TryGetComponent<SpriteRenderer>(out var renderer) ? renderer : null;
+            base.OnValidate();
         }
     }
 }

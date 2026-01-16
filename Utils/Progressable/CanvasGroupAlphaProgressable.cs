@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Kuchinashi.Utils.Progressable
 {
-    [ExecuteInEditMode]
     public class CanvasGroupAlphaProgressable : Progressable
     {
         [SerializeField] private CanvasGroup TargetCanvasGroup;
@@ -20,12 +19,13 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetCanvasGroup == null) TargetCanvasGroup = TryGetComponent<CanvasGroup>(out var cg) ? cg : null;
         }
 
-        internal override void Update()
+        protected override void ApplyEvaluation()
         {
             if (TargetCanvasGroup == null) return;
-            base.Update();
 
-            TargetCanvasGroup.alpha = Mathf.Lerp(StartAlpha, EndAlpha, evaluation);
+            var nextAlpha = Mathf.Lerp(StartAlpha, EndAlpha, evaluation);
+            if (!Mathf.Approximately(TargetCanvasGroup.alpha, nextAlpha))
+                TargetCanvasGroup.alpha = nextAlpha;
             
             if (Mathf.Approximately(TargetCanvasGroup.alpha, 1f))
             {
@@ -37,6 +37,12 @@ namespace Kuchinashi.Utils.Progressable
                 TargetCanvasGroup.blocksRaycasts = false;
                 TargetCanvasGroup.interactable = false;
             }
+        }
+
+        protected override void OnValidate()
+        {
+            if (TargetCanvasGroup == null) TargetCanvasGroup = TryGetComponent<CanvasGroup>(out var cg) ? cg : null;
+            base.OnValidate();
         }
     }
 }

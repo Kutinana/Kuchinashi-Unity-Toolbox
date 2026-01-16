@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Kuchinashi.Utils.Progressable
 {
-    [ExecuteInEditMode]
     public class PositionProgressable : Progressable
     {
         public Transform TargetTransform;
@@ -17,12 +16,19 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetTransform == null) TargetTransform = transform;
         }
 
-        internal override void Update()
+        protected override void ApplyEvaluation()
         {
             if (TargetTransform == null) return;
-            base.Update();
+            
+            var next = Vector3.Lerp(StartPosition, EndPosition, evaluation);
+            if (TargetTransform.localPosition != next)
+                TargetTransform.localPosition = next;
+        }
 
-            TargetTransform.localPosition = Vector3.Lerp(StartPosition, EndPosition, evaluation);
+        protected override void OnValidate()
+        {
+            if (TargetTransform == null) TargetTransform = transform;
+            base.OnValidate();
         }
     }
 }

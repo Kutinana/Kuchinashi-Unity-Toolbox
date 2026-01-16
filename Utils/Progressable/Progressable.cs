@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Kuchinashi.Utils.Progressable
 {
-    [ExecuteInEditMode]
     public class Progressable : MonoBehaviour
     {
         [Range(0, 1)] public float Progress = 0;
@@ -15,7 +14,28 @@ namespace Kuchinashi.Utils.Progressable
 
         internal virtual void Update()
         {
-            evaluation = ProgressCurve.Evaluate(Progress);
+            if (!Application.isPlaying) return;
+            Apply();
+        }
+
+        /// <summary>
+        /// 在当前 Progress 下计算 evaluation 并把结果应用到目标组件。
+        /// - 运行时：由 Update 驱动
+        /// - 编辑器：由 OnValidate 驱动（预览）
+        /// </summary>
+        public void Apply()
+        {
+            evaluation = (ProgressCurve != null) ? ProgressCurve.Evaluate(Progress) : Progress;
+            ApplyEvaluation();
+        }
+
+        /// <summary>派生类在这里把 evaluation 写入目标组件</summary>
+        protected virtual void ApplyEvaluation() { }
+
+        protected virtual void OnValidate()
+        {
+            if (Application.isPlaying) return;
+            Apply();
         }
 
         public void LinearTransition(float time)

@@ -1,6 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+
 namespace Kuchinashi.Utils
 {
     public abstract class RandomPicker<T> : MonoBehaviour

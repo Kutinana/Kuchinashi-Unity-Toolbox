@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 namespace Kuchinashi.Utils.Progressable
 {
-    [ExecuteInEditMode]
     public class ImageColorProgressable : Progressable
     {
         public Image TargetImage;
@@ -18,12 +17,19 @@ namespace Kuchinashi.Utils.Progressable
             if (TargetImage == null) TargetImage = TryGetComponent<Image>(out var image) ? image : null;
         }
 
-        internal override void Update()
+        protected override void ApplyEvaluation()
         {
             if (TargetImage == null) return;
-            base.Update();
+            
+            var next = Color.Lerp(StartColor, EndColor, evaluation);
+            if (TargetImage.color != next)
+                TargetImage.color = next;
+        }
 
-            TargetImage.color = Color.Lerp(StartColor, EndColor, evaluation);
+        protected override void OnValidate()
+        {
+            if (TargetImage == null) TargetImage = TryGetComponent<Image>(out var image) ? image : null;
+            base.OnValidate();
         }
     }
 }
