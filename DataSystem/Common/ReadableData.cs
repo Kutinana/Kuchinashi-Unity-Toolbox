@@ -1,16 +1,17 @@
 using System;
 using System.IO;
+#if KUCHINASHI_TOOLBOX_NEWTONSOFT_JSON
 using Newtonsoft.Json;
+#endif
 using UnityEngine;
 
-# if SUPPORT_QFRAMEWORK
-
+#if KUCHINASHI_TOOLBOX_NEWTONSOFT_JSON && SUPPORT_QFRAMEWORK
 using QFramework;
-
-# endif
+#endif
 
 namespace Kuchinashi.DataSystem
 {
+#if KUCHINASHI_TOOLBOX_NEWTONSOFT_JSON
     public abstract partial class ReadableData : IReadableData
     {
         public abstract string Path { get; }
@@ -85,7 +86,7 @@ namespace Kuchinashi.DataSystem
             }
         }
 
-# if SUPPORT_QFRAMEWORK
+#if SUPPORT_QFRAMEWORK
 
         public static T DeSerialize<T>(string _bundle, string _id) where T : IReadableData, new()
         {
@@ -122,7 +123,34 @@ namespace Kuchinashi.DataSystem
                 return false;
             }
         }
-# endif
+#endif
 
     }
+#else
+    public abstract partial class ReadableData : IReadableData
+    {
+        public abstract string Path { get; }
+
+        public virtual IReadableData DeSerialize() => null;
+
+        public virtual T DeSerialize<T>() where T : IReadableData, new() => new T();
+
+        public virtual bool Validate<T>(out T value) where T : IReadableData, new()
+        {
+            value = new T();
+            return false;
+        }
+    }
+
+    public partial class ReadableData
+    {
+        public static T DeSerialize<T>(string _path) where T : new() => new T();
+
+        public static bool Validate<T>(string _path, out T value) where T : new()
+        {
+            value = new T();
+            return false;
+        }
+    }
+#endif
 }

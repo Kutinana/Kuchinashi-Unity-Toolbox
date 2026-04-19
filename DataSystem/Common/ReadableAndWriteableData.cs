@@ -1,10 +1,13 @@
 using System;
 using System.IO;
+#if KUCHINASHI_TOOLBOX_NEWTONSOFT_JSON
 using Newtonsoft.Json;
+#endif
 using UnityEngine;
 
 namespace Kuchinashi.DataSystem
 {
+#if KUCHINASHI_TOOLBOX_NEWTONSOFT_JSON
     public abstract partial class ReadableAndWriteableData : IReadableData , IWriteableData
     {
         public abstract string Path { get; }
@@ -51,4 +54,24 @@ namespace Kuchinashi.DataSystem
             }
         }
     }
+#else
+    public abstract partial class ReadableAndWriteableData : IReadableData, IWriteableData
+    {
+        public abstract string Path { get; }
+
+        public void Serialize()
+        {
+        }
+
+        public virtual IReadableData DeSerialize() => null;
+
+        public virtual T DeSerialize<T>() where T : IReadableData, new() => new T();
+
+        public virtual bool Validate<T>(out T value) where T : IReadableData, new()
+        {
+            value = new T();
+            return false;
+        }
+    }
+#endif
 }
