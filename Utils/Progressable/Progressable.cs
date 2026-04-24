@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Kuchinashi.Utils.Progressable
 {
-    public class Progressable : MonoBehaviour
+    public partial class Progressable : MonoBehaviour
     {
         [Range(0, 1)] public float Progress = 0;
         public AnimationCurve ProgressCurve = AnimationCurve.Linear(0, 0, 1, 1);
