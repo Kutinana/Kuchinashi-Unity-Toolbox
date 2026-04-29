@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Kuchinashi.Utils.Progressable
 {
@@ -36,8 +39,24 @@ namespace Kuchinashi.Utils.Progressable
         protected virtual void OnValidate()
         {
             if (Application.isPlaying) return;
+#if UNITY_EDITOR
+            // 不在 OnValidate 内直接 Apply（改 CanvasGroup 会触发 TMP 等 SendMessage）。
+            // 用下一 tick 的 EditorApplication.update 比 delayCall 更跟手，预览不易卡顿。
+            EditorApplication.update -= EditorApplyAfterValidation;
+            EditorApplication.update += EditorApplyAfterValidation;
+#else
+            Apply();
+#endif
+        }
+
+#if UNITY_EDITOR
+        private void EditorApplyAfterValidation()
+        {
+            EditorApplication.update -= EditorApplyAfterValidation;
+            if (this == null) return;
             Apply();
         }
+#endif
 
         public void LinearTransition(float time)
         {
