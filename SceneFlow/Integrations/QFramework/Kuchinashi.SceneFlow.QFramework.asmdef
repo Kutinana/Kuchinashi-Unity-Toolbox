@@ -1,0 +1,17 @@
+{
+    "name": "Kuchinashi.SceneFlow.QFramework",
+    "rootNamespace": "Kuchinashi.SceneFlow.Integrations.QFramework",
+    "references": [
+        "Kuchinashi.SceneFlow.Runtime",
+        "QFramework"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
