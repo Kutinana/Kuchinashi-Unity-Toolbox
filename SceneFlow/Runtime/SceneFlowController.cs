@@ -108,6 +108,41 @@ namespace Kuchinashi.SceneFlow
         }
 
         /// <summary>
+        /// First-load only: additive-loads content without transition cover (no <see cref="ISceneTransitionView"/>). Use when shell starts with no content yet.
+        /// </summary>
+        public bool TryLoadInitialContentAdditiveDirect(string sceneName, bool waitForContentReady = true)
+        {
+            if (!EnsureConfigured())
+            {
+                return false;
+            }
+
+            if (m_IsTransitioning)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(sceneName))
+            {
+                return false;
+            }
+
+            if (sceneName == m_ShellScene.name)
+            {
+                Debug.LogWarning("[SceneFlow] Target must be a content scene, not the shell scene.");
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(m_CurrentContentSceneName))
+            {
+                return false;
+            }
+
+            m_Running = StartCoroutine(DirectLoadAdditiveContentRoutine(sceneName, waitForContentReady));
+            return true;
+        }
+
+        /// <summary>
         /// Lets the current content scene signal it is ready to reveal (after <see cref="RequestSwitchContent"/> with wait flag).
         /// </summary>
         public void NotifyContentReady()
@@ -219,6 +254,54 @@ namespace Kuchinashi.SceneFlow
             m_Bus.Publish(new OnSceneFlowExitCoverStartedEvent(m_CurrentContentSceneName));
             yield return m_View.ExitCover();
             m_Bus.Publish(new OnSceneFlowExitCoverCompletedEvent(m_CurrentContentSceneName));
+            m_Bus.Publish(new OnSceneFlowTransitionIdleEvent());
+
+            m_IsTransitioning = false;
+            m_Running = null;
+        }
+
+        private IEnumerator DirectLoadAdditiveContentRoutine(string targetSceneName, bool waitForContentReady)
+        {
+            m_IsTransitioning = true;
+            m_ContentReady = false;
+
+            var asyncLoad = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Additive);
+            if (asyncLoad == null)
+            {
+                Debug.LogError($"[SceneFlow] LoadSceneAsync failed for '{targetSceneName}'. Is it in Build Settings?");
+                m_IsTransitioning = false;
+                m_Running = null;
+                yield break;
+            }
+
+            asyncLoad.allowSceneActivation = false;
+            while (asyncLoad.progress < 0.9f)
+            {
+                yield return null;
+            }
+
+            asyncLoad.allowSceneActivation = true;
+            yield return asyncLoad;
+
+            var loaded = SceneManager.GetSceneByName(targetSceneName);
+            if (!loaded.IsValid() || !loaded.isLoaded)
+            {
+                Debug.LogError($"[SceneFlow] Scene '{targetSceneName}' did not load correctly.");
+                m_IsTransitioning = false;
+                m_Running = null;
+                yield break;
+            }
+
+            SceneManager.SetActiveScene(loaded);
+            m_CurrentContentSceneName = targetSceneName;
+            m_Bus.Publish(new OnSceneFlowContentSceneActivatedEvent(targetSceneName));
+
+            if (waitForContentReady)
+            {
+                m_ContentReady = false;
+                yield return new WaitUntil(() => m_ContentReady);
+            }
+
             m_Bus.Publish(new OnSceneFlowTransitionIdleEvent());
 
             m_IsTransitioning = false;

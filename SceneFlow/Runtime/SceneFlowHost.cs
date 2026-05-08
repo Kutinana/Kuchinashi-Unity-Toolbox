@@ -18,8 +18,15 @@ namespace Kuchinashi.SceneFlow
 
         [SerializeField] private string m_InitialContentScene;
         [SerializeField] private bool m_LoadInitialOnStart = true;
-        [SerializeField] private bool m_WaitContentReadyOnInitialLoad = true;
+        [SerializeField] private bool m_WaitContentReadyOnInitialLoad = false;
         [SerializeField] private SceneTransitionViewBehaviour m_TransitionViewBehaviour;
+        [SerializeField] private string m_InspectorJumpSceneName;
+
+        #endregion
+
+        #region Public Properties
+
+        public string InspectorJumpSceneName => m_InspectorJumpSceneName;
 
         #endregion
 
@@ -33,8 +40,7 @@ namespace Kuchinashi.SceneFlow
                 bus = gameObject.AddComponent<InMemorySceneMessageBus>();
             }
 
-            var controller = GetComponent<SceneFlowController>();
-            if (controller == null)
+            if (!TryGetComponent(out SceneFlowController controller))
             {
                 controller = gameObject.AddComponent<SceneFlowController>();
             }
@@ -54,8 +60,34 @@ namespace Kuchinashi.SceneFlow
             var controller = GetComponent<SceneFlowController>();
             if (controller != null)
             {
-                controller.RequestSwitchContent(m_InitialContentScene, m_WaitContentReadyOnInitialLoad);
+                controller.TryLoadInitialContentAdditiveDirect(m_InitialContentScene, m_WaitContentReadyOnInitialLoad);
             }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public bool TryJumpToInspectorScene()
+        {
+            return TryJumpToScene(m_InspectorJumpSceneName);
+        }
+
+        public bool TryJumpToScene(string _sceneName)
+        {
+            if (string.IsNullOrWhiteSpace(_sceneName))
+            {
+                Debug.LogWarning("[SceneFlow] Inspector jump requires a scene name.");
+                return false;
+            }
+
+            if (!TryGetComponent(out SceneFlowController controller))
+            {
+                Debug.LogError("[SceneFlow] SceneFlowController is missing. Enter Play Mode so SceneFlowHost can initialize it.");
+                return false;
+            }
+
+            return controller.TryRequestSwitchContent(_sceneName.Trim(), false);
         }
 
         #endregion
