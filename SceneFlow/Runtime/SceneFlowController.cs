@@ -70,7 +70,7 @@ namespace Kuchinashi.SceneFlow
         /// <summary>
         /// Additive-load target as new active content; unloads previous content if any (never unloads shell).
         /// </summary>
-        public bool TryRequestSwitchContent(string sceneName, bool waitForContentReady = true)
+        public bool TryRequestSwitchContent(string sceneName, bool waitForContentReady = false)
         {
             if (!EnsureConfigured())
             {
@@ -102,7 +102,7 @@ namespace Kuchinashi.SceneFlow
             return true;
         }
 
-        public void RequestSwitchContent(string sceneName, bool waitForContentReady = true)
+        public void RequestSwitchContent(string sceneName, bool waitForContentReady = false)
         {
             TryRequestSwitchContent(sceneName, waitForContentReady);
         }
@@ -110,7 +110,7 @@ namespace Kuchinashi.SceneFlow
         /// <summary>
         /// First-load only: additive-loads content without transition cover (no <see cref="ISceneTransitionView"/>). Use when shell starts with no content yet.
         /// </summary>
-        public bool TryLoadInitialContentAdditiveDirect(string sceneName, bool waitForContentReady = true)
+        public bool TryLoadInitialContentAdditiveDirect(string sceneName, bool waitForContentReady = false)
         {
             if (!EnsureConfigured())
             {
