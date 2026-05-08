@@ -179,6 +179,41 @@ namespace Kuchinashi.SceneFlow
             TryRequestUnloadCurrentContent(waitForContentReady);
         }
 
+        /// <summary>
+        /// Unloads the current additive content and loads it again with the same transition cover used by <see cref="TryRequestSwitchContent"/>.
+        /// </summary>
+        public bool TryRequestReloadCurrentContent(bool waitForContentReady = false)
+        {
+            if (!EnsureConfigured())
+            {
+                return false;
+            }
+
+            if (m_IsTransitioning)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(m_CurrentContentSceneName))
+            {
+                return false;
+            }
+
+            if (m_CurrentContentSceneName == m_ShellScene.name)
+            {
+                Debug.LogWarning("[SceneFlow] Cannot reload shell scene as content.");
+                return false;
+            }
+
+            m_Running = StartCoroutine(ReloadCurrentContentRoutine(waitForContentReady));
+            return true;
+        }
+
+        public void RequestReloadCurrentContent(bool waitForContentReady = false)
+        {
+            TryRequestReloadCurrentContent(waitForContentReady);
+        }
+
         #endregion
 
         #region Private Methods
@@ -338,6 +373,85 @@ namespace Kuchinashi.SceneFlow
                 yield return new WaitUntil(() => m_ContentReady);
             }
 
+            m_Bus.Publish(new OnSceneFlowExitCoverStartedEvent(contentName));
+            yield return m_View.ExitCover();
+            m_Bus.Publish(new OnSceneFlowExitCoverCompletedEvent(contentName));
+            m_Bus.Publish(new OnSceneFlowTransitionIdleEvent());
+
+            m_IsTransitioning = false;
+            m_Running = null;
+        }
+
+        private IEnumerator ReloadCurrentContentRoutine(bool waitForContentReady)
+        {
+            m_IsTransitioning = true;
+            m_ContentReady = false;
+
+            var contentName = m_CurrentContentSceneName;
+            m_Bus.Publish(new OnSceneFlowEnterCoverStartedEvent(contentName));
+
+            yield return m_View.EnterCover();
+            m_Bus.Publish(new OnSceneFlowEnterCoverCompletedEvent(contentName));
+
+            if (m_ShellScene.IsValid() && m_ShellScene.isLoaded)
+            {
+                SceneManager.SetActiveScene(m_ShellScene);
+            }
+
+            var contentScene = SceneManager.GetSceneByName(contentName);
+            if (contentScene.IsValid() && contentScene.isLoaded)
+            {
+                yield return SceneManager.UnloadSceneAsync(contentScene);
+            }
+
+            m_CurrentContentSceneName = string.Empty;
+
+            var asyncLoad = SceneManager.LoadSceneAsync(contentName, LoadSceneMode.Additive);
+            if (asyncLoad == null)
+            {
+                Debug.LogError($"[SceneFlow] LoadSceneAsync failed for '{contentName}' after reload. Is it in Build Settings?");
+                yield return StartCoroutine(FailReloadExitCover(contentName));
+                yield break;
+            }
+
+            asyncLoad.allowSceneActivation = false;
+            while (asyncLoad.progress < 0.9f)
+            {
+                yield return null;
+            }
+
+            asyncLoad.allowSceneActivation = true;
+            yield return asyncLoad;
+
+            var loaded = SceneManager.GetSceneByName(contentName);
+            if (!loaded.IsValid() || !loaded.isLoaded)
+            {
+                Debug.LogError($"[SceneFlow] Scene '{contentName}' did not load correctly after reload.");
+                yield return StartCoroutine(FailReloadExitCover(contentName));
+                yield break;
+            }
+
+            SceneManager.SetActiveScene(loaded);
+            m_CurrentContentSceneName = contentName;
+            m_Bus.Publish(new OnSceneFlowContentSceneActivatedEvent(contentName));
+
+            if (waitForContentReady)
+            {
+                m_ContentReady = false;
+                yield return new WaitUntil(() => m_ContentReady);
+            }
+
+            m_Bus.Publish(new OnSceneFlowExitCoverStartedEvent(m_CurrentContentSceneName));
+            yield return m_View.ExitCover();
+            m_Bus.Publish(new OnSceneFlowExitCoverCompletedEvent(m_CurrentContentSceneName));
+            m_Bus.Publish(new OnSceneFlowTransitionIdleEvent());
+
+            m_IsTransitioning = false;
+            m_Running = null;
+        }
+
+        private IEnumerator FailReloadExitCover(string contentName)
+        {
             m_Bus.Publish(new OnSceneFlowExitCoverStartedEvent(contentName));
             yield return m_View.ExitCover();
             m_Bus.Publish(new OnSceneFlowExitCoverCompletedEvent(contentName));
